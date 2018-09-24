@@ -89,6 +89,15 @@ public class CrimeLab {
         return new File(externalFilesDir, crime.getPhotoFilename());
 
     }
+    public File getPhotoFile(Crime crime, String a) {
+        File externalFilesDir = mContext.getExternalFilesDir("images");
+        if (externalFilesDir == null) {
+            return null;
+        }
+        // Log.d(TAG, externalFilesDir.getAbsolutePath());
+        return new File(externalFilesDir, a+crime.getId().toString());
+
+    }
 
     public void updateCrime(Crime crime) {
         String uuidString = crime.getId().toString();
