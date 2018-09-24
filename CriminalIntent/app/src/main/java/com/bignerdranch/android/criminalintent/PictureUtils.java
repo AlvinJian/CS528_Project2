@@ -86,7 +86,7 @@ public class PictureUtils {
             Paint redPaint = new Paint();
             redPaint.setColor(0XFFFF0000);
             redPaint.setStyle(Paint.Style.STROKE);
-            redPaint.setStrokeWidth(8.0f);
+            redPaint.setStrokeWidth(20.0f);
             canvas.drawPath(path, redPaint);
         }
         return ret;

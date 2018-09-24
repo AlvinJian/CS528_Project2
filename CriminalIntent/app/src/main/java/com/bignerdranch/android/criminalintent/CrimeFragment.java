@@ -16,6 +16,7 @@ import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,12 +27,14 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.io.File;
 import java.util.Date;
 import java.util.UUID;
 
 public class CrimeFragment extends Fragment {
+    private static final String TAG = "CrimeFragment";
 
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
@@ -49,6 +52,8 @@ public class CrimeFragment extends Fragment {
     private Button mSuspectButton;
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
+    private CheckBox mCheckBox;
+    private TextView mFaceNumText;
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
@@ -176,6 +181,8 @@ public class CrimeFragment extends Fragment {
         });
 
         mPhotoView = (ImageView) v.findViewById(R.id.crime_photo);
+        mCheckBox = (CheckBox) v.findViewById(R.id.face_detection_box);
+        mFaceNumText = (TextView) v.findViewById(R.id.face_num_text);
         updatePhotoView();
 
         return v;
@@ -256,8 +263,23 @@ public class CrimeFragment extends Fragment {
         } else {
             Bitmap bitmap = PictureUtils.getScaledBitmap(
                     mPhotoFile.getPath(), getActivity());
-            PictureUtils.BitmapWithFaces bitmapWithFaces = PictureUtils.MarkFaces(bitmap, getContext());
-            mPhotoView.setImageBitmap(bitmapWithFaces.bitmap);
+            if (mCheckBox.isChecked())
+            {
+                PictureUtils.BitmapWithFaces bitmapWithFaces = PictureUtils.MarkFaces(bitmap, getContext());
+                mPhotoView.setImageBitmap(bitmapWithFaces.bitmap);
+                StringBuilder builder = new StringBuilder();
+                builder.append(bitmapWithFaces.faces.size());
+                builder.append(" ");
+                builder.append(getContext().getResources().getString(R.string.faces_text_stub));
+                String text = builder.toString();
+                mFaceNumText.setText(text);
+                Log.d(TAG, text);
+            }
+            else
+            {
+                mPhotoView.setImageBitmap(bitmap);
+                mFaceNumText.setText(" ");
+            }
         }
     }
 

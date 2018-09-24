@@ -54,4 +54,28 @@
             />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/face_detection_box"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/enable_face_detection"
+            android:checked="true"
+            android:layout_weight="1"
+            android:layout_gravity="start"/>
+
+        <TextView
+            android:id="@+id/face_num_text"
+            android:textSize="20sp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center" />
+
+    </LinearLayout>
+
 </LinearLayout>
