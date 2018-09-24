@@ -30,8 +30,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.Date;
 import java.util.UUID;
+import java.util.Date;
 
 public class CrimeFragment extends Fragment {
     private static final String TAG = "CrimeFragment";
@@ -44,16 +49,18 @@ public class CrimeFragment extends Fragment {
     private static final int REQUEST_PHOTO= 2;
 
     private Crime mCrime;
-    private File mPhotoFile;
+    private File mPhotoFile, mPhotoFile1, mPhotoFile2, mPhotoFile3, mPhotoTemp;
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckbox;
     private Button mReportButton;
     private Button mSuspectButton;
     private ImageButton mPhotoButton;
-    private ImageView mPhotoView;
     private CheckBox mCheckBox;
     private TextView mFaceNumText;
+    private ImageView mPhotoView, mPhotoView1, mPhotoView2, mPhotoView3;
+    private boolean firstPicture=true;
+
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
@@ -70,6 +77,9 @@ public class CrimeFragment extends Fragment {
         UUID crimeId = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
         mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime);
+        mPhotoFile1= CrimeLab.get(getActivity()).getPhotoFile(mCrime, "IMG_" + "1" + ".jpg");
+        mPhotoFile2= CrimeLab.get(getActivity()).getPhotoFile(mCrime, "IMG_" + "2" + ".jpg");
+        mPhotoFile3= CrimeLab.get(getActivity()).getPhotoFile(mCrime, "IMG_" + "3" + ".jpg");
     }
 
     @Override
@@ -174,8 +184,10 @@ public class CrimeFragment extends Fragment {
         }
 
         mPhotoButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
+                copyFromCurrent();
                 startActivityForResult(captureImage, REQUEST_PHOTO);
             }
         });
@@ -183,8 +195,11 @@ public class CrimeFragment extends Fragment {
         mPhotoView = (ImageView) v.findViewById(R.id.crime_photo);
         mCheckBox = (CheckBox) v.findViewById(R.id.face_detection_box);
         mFaceNumText = (TextView) v.findViewById(R.id.face_num_text);
+        mPhotoView1 = (ImageView) v.findViewById(R.id.imageView1);
+        mPhotoView2 = (ImageView) v.findViewById(R.id.imageView2);
+        mPhotoView3 = (ImageView) v.findViewById(R.id.imageView3);
         updatePhotoView();
-
+        firstPicture=mPhotoFile.exists()?false:true;
         return v;
     }
 
@@ -229,8 +244,23 @@ public class CrimeFragment extends Fragment {
                 c.close();
             }
         } else if (requestCode == REQUEST_PHOTO) {
+            movePhotoView();
             updatePhotoView();
+            firstPicture=false;
+
         }
+    }
+    private void copyFile(File sourceFile, File destFile) throws IOException{
+        if(!sourceFile.exists()) return;
+        FileChannel source=null;
+        FileChannel destination=null;
+        source=new FileInputStream(sourceFile).getChannel();
+        destination=new FileOutputStream(destFile).getChannel();
+        if(destination!=null && source!=null){
+            destination.transferFrom(source,0,source.size());
+        }
+        if(source!=null) source.close();
+        if(destination!=null) destination.close();
     }
 
     private void updateDate() {
@@ -281,6 +311,62 @@ public class CrimeFragment extends Fragment {
                 mFaceNumText.setText(" ");
             }
         }
+        File[] f={mPhotoFile1, mPhotoFile2, mPhotoFile3};
+        ImageView[] iView={mPhotoView1, mPhotoView2, mPhotoView3};
+        for(int i=0;i<f.length;i++){
+            if (f[i] == null || !f[i].exists()) {
+                iView[i].setImageDrawable(null);
+            } else {
+                Bitmap bitmap = PictureUtils.getScaledBitmap(
+                        f[i].getPath(), getActivity());
+                iView[i].setImageBitmap(bitmap);
+            }
+        }
+
+
+
+    }
+    public void updatePhotoView(ImageView tempv, File f){
+        if (f == null || !f.exists()) {
+            tempv.setImageDrawable(null);
+        } else {
+            Bitmap bitmap = PictureUtils.getScaledBitmap(
+                    f.getPath(), getActivity());
+            tempv.setImageBitmap(bitmap);
+        }
+    }
+    public void copyFromCurrent(){
+        Date date=new Date();
+        if(!firstPicture){
+            mPhotoTemp=CrimeLab.get(getActivity()).getPhotoFile(mCrime,"IMG_" + "TempCurrent" + ".jpg");
+//            mPhotoFile1=CrimeLab.get(getActivity()).getPhotoFile(mCrime,"IMG_" + android.text.format.DateFormat.format("yyyy-MM-dd hh:mm:ss a", new java.util.Date()) + ".jpg");
+                try{
+                    mPhotoTemp.createNewFile();
+                    copyFile(mPhotoFile,mPhotoTemp);
+                } catch (IOException e){
+                    e.printStackTrace(); }
+
+        }
+    }
+    private void movePhotoView() {
+
+
+        if(mPhotoFile3!=null && mPhotoFile3.exists()) mPhotoFile3.delete();
+        if(mPhotoFile2!=null && mPhotoFile2.exists()){
+            mPhotoFile2.renameTo(CrimeLab.get(getActivity()).getPhotoFile(mCrime,"IMG_" + "3" + ".jpg"));
+            mPhotoFile3=CrimeLab.get(getActivity()).getPhotoFile(mCrime,"IMG_" + "3" + ".jpg");
+        }
+        if(mPhotoFile1!=null && mPhotoFile1.exists()){
+            mPhotoFile1.renameTo(CrimeLab.get(getActivity()).getPhotoFile(mCrime,"IMG_" + "2" + ".jpg"));
+            mPhotoFile2=CrimeLab.get(getActivity()).getPhotoFile(mCrime,"IMG_" + "2" + ".jpg");
+        }
+        if(mPhotoTemp!=null && mPhotoTemp.exists()){
+            mPhotoTemp.renameTo(CrimeLab.get(getActivity()).getPhotoFile(mCrime,"IMG_" + "1" + ".jpg"));
+            mPhotoFile1=CrimeLab.get(getActivity()).getPhotoFile(mCrime,"IMG_" + "1" + ".jpg");
+            mPhotoTemp.delete();
+        }
+
+
     }
 
 }
