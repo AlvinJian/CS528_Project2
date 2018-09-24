@@ -256,7 +256,9 @@ public class CrimeFragment extends Fragment {
         } else {
             Bitmap bitmap = PictureUtils.getScaledBitmap(
                     mPhotoFile.getPath(), getActivity());
-            mPhotoView.setImageBitmap(bitmap);
+            PictureUtils.BitmapWithFaces bitmapWithFaces = PictureUtils.MarkFaces(bitmap, getContext());
+            mPhotoView.setImageBitmap(bitmapWithFaces.bitmap);
         }
     }
+
 }
