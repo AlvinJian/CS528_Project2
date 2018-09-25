@@ -115,6 +115,10 @@ public class CrimeLab {
         values.put(CrimeTable.Cols.DATE, crime.getDate().getTime());
         values.put(CrimeTable.Cols.SOLVED, crime.isSolved() ? 1 : 0);
         values.put(CrimeTable.Cols.SUSPECT, crime.getSuspect());
+        values.put(CrimeTable.Cols.IMG_1, crime.getImg_1());
+        values.put(CrimeTable.Cols.IMG_2, crime.getImg_2());
+        values.put(CrimeTable.Cols.IMG_3, crime.getImg_3());
+        values.put(CrimeTable.Cols.IMG_4, crime.getImg_4());
 
         return values;
     }

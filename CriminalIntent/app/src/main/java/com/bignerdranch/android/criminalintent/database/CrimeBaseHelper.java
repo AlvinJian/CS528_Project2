@@ -24,12 +24,18 @@ public class CrimeBaseHelper extends SQLiteOpenHelper {
                 CrimeTable.Cols.TITLE + ", " +
                 CrimeTable.Cols.DATE + ", " +
                 CrimeTable.Cols.SUSPECT + ", " +
-                CrimeTable.Cols.SOLVED +
+                CrimeTable.Cols.SOLVED + ", " +
+                CrimeTable.Cols.IMG_1 + ", " +
+                CrimeTable.Cols.IMG_2 + ", " +
+                CrimeTable.Cols.IMG_3 + ", " +
+                CrimeTable.Cols.IMG_4 +
                 ")"
         );
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS crimes");
+        onCreate(db);
     }
 }
