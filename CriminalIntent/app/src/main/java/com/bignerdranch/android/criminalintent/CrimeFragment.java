@@ -194,6 +194,12 @@ public class CrimeFragment extends Fragment {
 
         mPhotoView = (ImageView) v.findViewById(R.id.crime_photo);
         mCheckBox = (CheckBox) v.findViewById(R.id.face_detection_box);
+        mCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updatePhotoView();
+            }
+        });
         mFaceNumText = (TextView) v.findViewById(R.id.face_num_text);
         mPhotoView1 = (ImageView) v.findViewById(R.id.imageView1);
         mPhotoView2 = (ImageView) v.findViewById(R.id.imageView2);
