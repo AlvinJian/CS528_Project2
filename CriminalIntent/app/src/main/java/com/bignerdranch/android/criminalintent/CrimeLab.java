@@ -94,7 +94,7 @@ public class CrimeLab {
             return null;
         }
         // Log.d(TAG, externalFilesDir.getAbsolutePath());
-        return new File(externalFilesDir, fileName + crime.getId().toString());
+        return new File(externalFilesDir, crime.getId().toString()+fileName);
 
     }
 

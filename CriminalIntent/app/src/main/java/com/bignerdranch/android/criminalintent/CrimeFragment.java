@@ -50,7 +50,9 @@ public class CrimeFragment extends Fragment {
     private static final int REQUEST_PHOTO= 2;
 
     private Crime mCrime;
-    private File mPhotoFile, mPhotoFile1, mPhotoFile2, mPhotoFile3, mPhotoTemp;
+    private File mPhotoFile, mPhotoFile1, mPhotoFile2, mPhotoFile3, mPhotoFile4, mPhotoTemp;
+    private File[] mPhotoAry;
+    private int currentImagePosition=0;
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckbox;
@@ -59,7 +61,7 @@ public class CrimeFragment extends Fragment {
     private ImageButton mPhotoButton;
     private CheckBox mCheckBox;
     private TextView mFaceNumText;
-    private ImageView mPhotoView, mPhotoView1, mPhotoView2, mPhotoView3;
+    private ImageView mPhotoView, mPhotoView1, mPhotoView2, mPhotoView3, mPhotoView4;
     private boolean firstPicture=true;
 
 
@@ -80,10 +82,13 @@ public class CrimeFragment extends Fragment {
         mCrime.setImg_1(crimeId + "IMG_" + "1" + IMAGE_TYPE);
         mCrime.setImg_2(crimeId + "IMG_" + "2" + IMAGE_TYPE);
         mCrime.setImg_3(crimeId + "IMG_" + "3" + IMAGE_TYPE);
+        mCrime.setImg_4(crimeId + "IMG_" + "4" + IMAGE_TYPE);
         mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime);
         mPhotoFile1= CrimeLab.get(getActivity()).getPhotoFile(mCrime, "IMG_" + "1" + IMAGE_TYPE);
         mPhotoFile2= CrimeLab.get(getActivity()).getPhotoFile(mCrime, "IMG_" + "2" + IMAGE_TYPE);
         mPhotoFile3= CrimeLab.get(getActivity()).getPhotoFile(mCrime, "IMG_" + "3" + IMAGE_TYPE);
+        mPhotoFile4= CrimeLab.get(getActivity()).getPhotoFile(mCrime, "IMG_" + "4" + IMAGE_TYPE);
+        mPhotoAry=new File[]{mPhotoFile1, mPhotoFile2, mPhotoFile3, mPhotoFile4};
     }
 
     @Override
@@ -191,12 +196,12 @@ public class CrimeFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                copyFromCurrent();
+//                copyFromCurrent();
                 startActivityForResult(captureImage, REQUEST_PHOTO);
             }
         });
 
-        mPhotoView = (ImageView) v.findViewById(R.id.crime_photo);
+//        mPhotoView = (ImageView) v.findViewById(R.id.crime_photo);
         mCheckBox = (CheckBox) v.findViewById(R.id.face_detection_box);
         mCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -205,11 +210,12 @@ public class CrimeFragment extends Fragment {
             }
         });
         mFaceNumText = (TextView) v.findViewById(R.id.face_num_text);
-        mPhotoView1 = (ImageView) v.findViewById(R.id.imageView1);
-        mPhotoView2 = (ImageView) v.findViewById(R.id.imageView2);
-        mPhotoView3 = (ImageView) v.findViewById(R.id.imageView3);
+        mPhotoView1 = (ImageView) v.findViewById(R.id.crime_photo1);
+        mPhotoView2 = (ImageView) v.findViewById(R.id.crime_photo2);
+        mPhotoView3 = (ImageView) v.findViewById(R.id.crime_photo3);
+        mPhotoView4 = (ImageView) v.findViewById(R.id.crime_photo4);
         updatePhotoView();
-        firstPicture=mPhotoFile.exists()?false:true;
+        firstPicture=mPhotoFile1.exists()?false:true;
         return v;
     }
 
@@ -254,8 +260,11 @@ public class CrimeFragment extends Fragment {
                 c.close();
             }
         } else if (requestCode == REQUEST_PHOTO) {
-            movePhotoView();
+//            movePhotoView();
+            faceDetectIndex = currentImagePosition;
             updatePhotoView();
+            currentImagePosition=(currentImagePosition+1)%4;
+            Log.d("CurrentImagePosition", ""+currentImagePosition);
             firstPicture=false;
 
         }
@@ -297,16 +306,65 @@ public class CrimeFragment extends Fragment {
         return report;
     }
 
+    private int faceDetectIndex = 0;
+
     private void updatePhotoView() {
-        if (mPhotoFile == null || !mPhotoFile.exists()) {
-            mPhotoView.setImageDrawable(null);
-        } else {
-            Bitmap bitmap = PictureUtils.getScaledBitmap(
-                    mPhotoFile.getPath(), getActivity());
+//        if (mPhotoFile == null || !mPhotoFile.exists()) {
+//            mPhotoView.setImageDrawable(null);
+//        } else {
+//            Bitmap bitmap = PictureUtils.getScaledBitmap(
+//                    mPhotoFile.getPath(), getActivity());
+//            if (mCheckBox.isChecked())
+//            {
+//                PictureUtils.BitmapWithFaces bitmapWithFaces = PictureUtils.MarkFaces(bitmap, getContext());
+//                mPhotoView.setImageBitmap(bitmapWithFaces.bitmap);
+//                StringBuilder builder = new StringBuilder();
+//                builder.append(bitmapWithFaces.faces.size());
+//                builder.append(" ");
+//                builder.append(getContext().getResources().getString(R.string.faces_text_stub));
+//                String text = builder.toString();
+//                mFaceNumText.setText(text);
+//                Log.d(TAG, text);
+//            }
+//            else
+//            {
+//                mPhotoView.setImageBitmap(bitmap);
+//                mFaceNumText.setText(" ");
+//            }
+//        }
+        if(mPhotoFile!=null && mPhotoFile.exists()){
+            mPhotoAry[currentImagePosition].delete();
+            try{
+                mPhotoAry[currentImagePosition].createNewFile();
+                copyFile(mPhotoFile,mPhotoAry[currentImagePosition]);
+                mPhotoFile.delete();
+            }catch (IOException e){
+                e.printStackTrace(); }
+
+//            mPhotoFile.renameTo(CrimeLab.get(getActivity()).getPhotoFile(mCrime,"IMG_" + currentImagePosition + IMAGE_TYPE));
+//            mPhotoFile.delete();
+        }
+
+
+        File[] f={mPhotoFile1, mPhotoFile2, mPhotoFile3, mPhotoFile4};
+        ImageView[] iView={mPhotoView1, mPhotoView2, mPhotoView3, mPhotoView4};
+        for(int i=0;i<f.length;i++){
+            if (f[i] == null || !f[i].exists()) {
+                iView[i].setImageDrawable(null);
+            } else {
+
+                Bitmap bitmap = PictureUtils.getScaledBitmap(
+                        f[i].getPath(), getActivity());
+                iView[i].setImageBitmap(bitmap);
+            }
+        }
+        if(mPhotoAry[faceDetectIndex] !=null && mPhotoAry[faceDetectIndex].exists()){
+            Bitmap bitmap = PictureUtils.getScaledBitmap
+                    (mPhotoAry[faceDetectIndex].getPath(), getActivity());
             if (mCheckBox.isChecked())
             {
                 PictureUtils.BitmapWithFaces bitmapWithFaces = PictureUtils.MarkFaces(bitmap, getContext());
-                mPhotoView.setImageBitmap(bitmapWithFaces.bitmap);
+                iView[faceDetectIndex].setImageBitmap(bitmapWithFaces.bitmap);
                 StringBuilder builder = new StringBuilder();
                 builder.append(bitmapWithFaces.faces.size());
                 builder.append(" ");
@@ -317,19 +375,8 @@ public class CrimeFragment extends Fragment {
             }
             else
             {
-                mPhotoView.setImageBitmap(bitmap);
+                iView[faceDetectIndex].setImageBitmap(bitmap);
                 mFaceNumText.setText(" ");
-            }
-        }
-        File[] f={mPhotoFile1, mPhotoFile2, mPhotoFile3};
-        ImageView[] iView={mPhotoView1, mPhotoView2, mPhotoView3};
-        for(int i=0;i<f.length;i++){
-            if (f[i] == null || !f[i].exists()) {
-                iView[i].setImageDrawable(null);
-            } else {
-                Bitmap bitmap = PictureUtils.getScaledBitmap(
-                        f[i].getPath(), getActivity());
-                iView[i].setImageBitmap(bitmap);
             }
         }
 
@@ -347,12 +394,12 @@ public class CrimeFragment extends Fragment {
     }
     public void copyFromCurrent(){
         Date date=new Date();
-        if(!firstPicture){
-            mPhotoTemp=CrimeLab.get(getActivity()).getPhotoFile(mCrime,"IMG_" + "TempCurrent" + ".jpg");
+        if(mPhotoAry[currentImagePosition].exists()){
+            mPhotoTemp=CrimeLab.get(getActivity()).getPhotoFile(mCrime,"IMG_" + "TempCurrent" + IMAGE_TYPE);
 //            mPhotoFile1=CrimeLab.get(getActivity()).getPhotoFile(mCrime,"IMG_" + android.text.format.DateFormat.format("yyyy-MM-dd hh:mm:ss a", new java.util.Date()) + ".jpg");
                 try{
                     mPhotoTemp.createNewFile();
-                    copyFile(mPhotoFile,mPhotoTemp);
+                    copyFile(mPhotoAry[currentImagePosition],mPhotoTemp);
                 } catch (IOException e){
                     e.printStackTrace(); }
 
