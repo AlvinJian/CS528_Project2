@@ -43,7 +43,6 @@ public class CrimeLab {
 
     public void addCrime(Crime c) {
         ContentValues values = getContentValues(c);
-
         mDatabase.insert(CrimeTable.NAME, null, values);
     }
 
@@ -89,13 +88,13 @@ public class CrimeLab {
         return new File(externalFilesDir, crime.getPhotoFilename());
 
     }
-    public File getPhotoFile(Crime crime, String a) {
+    public File getPhotoFile(Crime crime, String fileName) {
         File externalFilesDir = mContext.getExternalFilesDir("images");
         if (externalFilesDir == null) {
             return null;
         }
         // Log.d(TAG, externalFilesDir.getAbsolutePath());
-        return new File(externalFilesDir, a+crime.getId().toString());
+        return new File(externalFilesDir, fileName + crime.getId().toString());
 
     }
 
@@ -103,6 +102,7 @@ public class CrimeLab {
         String uuidString = crime.getId().toString();
         ContentValues values = getContentValues(crime);
 
+//        Log.i(TAG, "update crime*****************");
         mDatabase.update(CrimeTable.NAME, values,
                 CrimeTable.Cols.UUID + " = ?",
                 new String[] { uuidString });

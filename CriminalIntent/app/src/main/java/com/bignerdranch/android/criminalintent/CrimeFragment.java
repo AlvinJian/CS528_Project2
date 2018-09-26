@@ -43,6 +43,7 @@ public class CrimeFragment extends Fragment {
 
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
+    private static final String IMAGE_TYPE = ".jpg";
 
     private static final int REQUEST_DATE = 0;
     private static final int REQUEST_CONTACT = 1;
@@ -76,16 +77,19 @@ public class CrimeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         UUID crimeId = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
+        mCrime.setImg_1(crimeId + "IMG_" + "1" + IMAGE_TYPE);
+        mCrime.setImg_2(crimeId + "IMG_" + "2" + IMAGE_TYPE);
+        mCrime.setImg_3(crimeId + "IMG_" + "3" + IMAGE_TYPE);
         mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime);
-        mPhotoFile1= CrimeLab.get(getActivity()).getPhotoFile(mCrime, "IMG_" + "1" + ".jpg");
-        mPhotoFile2= CrimeLab.get(getActivity()).getPhotoFile(mCrime, "IMG_" + "2" + ".jpg");
-        mPhotoFile3= CrimeLab.get(getActivity()).getPhotoFile(mCrime, "IMG_" + "3" + ".jpg");
+        mPhotoFile1= CrimeLab.get(getActivity()).getPhotoFile(mCrime, "IMG_" + "1" + IMAGE_TYPE);
+        mPhotoFile2= CrimeLab.get(getActivity()).getPhotoFile(mCrime, "IMG_" + "2" + IMAGE_TYPE);
+        mPhotoFile3= CrimeLab.get(getActivity()).getPhotoFile(mCrime, "IMG_" + "3" + IMAGE_TYPE);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
+        Log.i(TAG, "onPauseUPDATE*****************");
         CrimeLab.get(getActivity())
                 .updateCrime(mCrime);
     }
