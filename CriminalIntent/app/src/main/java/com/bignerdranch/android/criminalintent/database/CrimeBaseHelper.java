@@ -8,7 +8,7 @@ import com.bignerdranch.android.criminalintent.database.CrimeDbSchema.CrimeTable
 
 public class CrimeBaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "CrimeBaseHelper";
-    private static final int VERSION = 2;
+    private static final int VERSION = 3;
     private static final String DATABASE_NAME = "crimeBase.db";
 
     public CrimeBaseHelper(Context context) {
@@ -37,7 +37,9 @@ public class CrimeBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS crimes");
-        onCreate(db);
+        if(oldVersion <= 2) {
+            db.execSQL("DROP TABLE IF EXISTS crimes");
+            onCreate(db);
+        }
     }
 }
