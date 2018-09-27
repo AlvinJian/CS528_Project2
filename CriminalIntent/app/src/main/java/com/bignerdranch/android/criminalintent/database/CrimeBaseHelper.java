@@ -28,7 +28,9 @@ public class CrimeBaseHelper extends SQLiteOpenHelper {
                 CrimeTable.Cols.IMG_1 + ", " +
                 CrimeTable.Cols.IMG_2 + ", " +
                 CrimeTable.Cols.IMG_3 + ", " +
-                CrimeTable.Cols.IMG_4 +
+                CrimeTable.Cols.IMG_4 + ", " +
+                CrimeTable.Cols.CURRENT_IMAGE_POSITION + ", " +
+                CrimeTable.Cols.FACE_DETECT_INDEX +
                 ")"
         );
     }

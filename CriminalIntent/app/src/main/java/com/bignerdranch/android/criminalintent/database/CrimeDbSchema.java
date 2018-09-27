@@ -14,7 +14,8 @@ public class CrimeDbSchema {
             public static final String IMG_2 = "img_2";
             public static final String IMG_3 = "img_3";
             public static final String IMG_4 = "img_4";
-
+            public static final String FACE_DETECT_INDEX = "face_detect_index";
+            public static final String CURRENT_IMAGE_POSITION= "current_image_position";
         }
     }
 }

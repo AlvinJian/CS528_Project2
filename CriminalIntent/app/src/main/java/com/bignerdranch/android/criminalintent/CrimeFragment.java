@@ -83,6 +83,8 @@ public class CrimeFragment extends Fragment {
         mCrime.setImg_2(crimeId + "IMG_" + "2" + IMAGE_TYPE);
         mCrime.setImg_3(crimeId + "IMG_" + "3" + IMAGE_TYPE);
         mCrime.setImg_4(crimeId + "IMG_" + "4" + IMAGE_TYPE);
+        mCrime.setCurrentImagePosition(currentImagePosition);
+        mCrime.setFaceDetectIndex(faceDetectIndex);
         mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime);
         mPhotoFile1= CrimeLab.get(getActivity()).getPhotoFile(mCrime, "IMG_" + "1" + IMAGE_TYPE);
         mPhotoFile2= CrimeLab.get(getActivity()).getPhotoFile(mCrime, "IMG_" + "2" + IMAGE_TYPE);
@@ -94,7 +96,7 @@ public class CrimeFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        Log.i(TAG, "onPauseUPDATE*****************");
+        //Log.i(TAG, "onPauseUPDATE*****************");
         CrimeLab.get(getActivity())
                 .updateCrime(mCrime);
     }

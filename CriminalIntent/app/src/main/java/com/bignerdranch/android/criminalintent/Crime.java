@@ -14,6 +14,8 @@ public class Crime {
     private String img_2;
     private String img_3;
     private String img_4;
+    private int currentImagePosition;
+    private int faceDetectIndex;
 
     public Crime() {
         this(UUID.randomUUID());
@@ -93,5 +95,21 @@ public class Crime {
 
     public void setImg_4(String img_4) {
         this.img_4 = img_4;
+    }
+
+    public int getCurrentImagePosition() {
+        return currentImagePosition;
+    }
+
+    public void setCurrentImagePosition(int currentImagePosition) {
+        this.currentImagePosition = currentImagePosition;
+    }
+
+    public int getFaceDetectIndex() {
+        return faceDetectIndex;
+    }
+
+    public void setFaceDetectIndex(int faceDetectIndex) {
+        this.faceDetectIndex = faceDetectIndex;
     }
 }

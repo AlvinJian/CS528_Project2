@@ -119,6 +119,8 @@ public class CrimeLab {
         values.put(CrimeTable.Cols.IMG_2, crime.getImg_2());
         values.put(CrimeTable.Cols.IMG_3, crime.getImg_3());
         values.put(CrimeTable.Cols.IMG_4, crime.getImg_4());
+        values.put(CrimeTable.Cols.CURRENT_IMAGE_POSITION, crime.getCurrentImagePosition());
+        values.put(CrimeTable.Cols.FACE_DETECT_INDEX, crime.getFaceDetectIndex());
 
         return values;
     }
