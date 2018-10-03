@@ -321,7 +321,10 @@ public class CrimeFragment extends Fragment {
         for(int i=0;i<mPhotoAry.length;i++){
             if (mPhotoAry[i] == null || !mPhotoAry[i].exists()) {
                 iView[i].setImageDrawable(null);
-            } else {
+            } else if (i == faceDetectIndex) {
+                continue;
+            }
+            else {
                 Bitmap bitmap = PictureUtils.getScaledBitmap(
                         mPhotoAry[i].getPath(), getActivity());
                 iView[i].setImageBitmap(bitmap);
@@ -348,6 +351,11 @@ public class CrimeFragment extends Fragment {
                 iView[faceDetectIndex].setImageBitmap(bitmap);
                 mFaceNumText.setText(" ");
             }
+        }
+        else
+        {
+            iView[faceDetectIndex].setImageDrawable(null);
+            mFaceNumText.setText(" ");
         }
 
     }
