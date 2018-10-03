@@ -52,7 +52,6 @@ public class CrimeFragment extends Fragment {
     private Crime mCrime;
     private File mPhotoFile, mPhotoFile1, mPhotoFile2, mPhotoFile3, mPhotoFile4, mPhotoTemp;
     private File[] mPhotoAry;
-    private int currentImagePosition=0, faceDetectIndex = 0;
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckbox;
@@ -83,8 +82,6 @@ public class CrimeFragment extends Fragment {
         mCrime.setImg_2(crimeId + "IMG_" + "2" + IMAGE_TYPE);
         mCrime.setImg_3(crimeId + "IMG_" + "3" + IMAGE_TYPE);
         mCrime.setImg_4(crimeId + "IMG_" + "4" + IMAGE_TYPE);
-        mCrime.setCurrentImagePosition(currentImagePosition);
-        mCrime.setFaceDetectIndex(faceDetectIndex);
         mPhotoFile = CrimeLab.get(getActivity()).getPhotoFile(mCrime);
         mPhotoFile1= CrimeLab.get(getActivity()).getPhotoFile(mCrime, "IMG_" + "1" + IMAGE_TYPE);
         mPhotoFile2= CrimeLab.get(getActivity()).getPhotoFile(mCrime, "IMG_" + "2" + IMAGE_TYPE);
@@ -260,11 +257,10 @@ public class CrimeFragment extends Fragment {
                 c.close();
             }
         } else if (requestCode == REQUEST_PHOTO) {
-//            movePhotoView();
-            faceDetectIndex = currentImagePosition;
+            mCrime.setFaceDetectIndex(mCrime.getCurrentImagePosition());
             updatePhotoView();
-            currentImagePosition=(currentImagePosition+1)%4;
-            Log.d("CurrentImagePosition", ""+currentImagePosition);
+            mCrime.setCurrentImagePosition((mCrime.getCurrentImagePosition()+1)%4);
+            Log.d("CurrentImagePosition", ""+mCrime.getCurrentImagePosition());
             firstPicture=false;
 
         }
@@ -307,6 +303,8 @@ public class CrimeFragment extends Fragment {
     }
     
     private void updatePhotoView() {
+        int currentImagePosition = mCrime.getCurrentImagePosition();
+        int faceDetectIndex = mCrime.getFaceDetectIndex();
 
         if(mPhotoFile!=null && mPhotoFile.exists()){
             mPhotoAry[currentImagePosition].delete();
@@ -335,6 +333,7 @@ public class CrimeFragment extends Fragment {
             if (mCheckBox.isChecked())
             {
                 PictureUtils.BitmapWithFaces bitmapWithFaces = PictureUtils.MarkFaces(bitmap, getContext());
+                bitmap.recycle();
                 iView[faceDetectIndex].setImageBitmap(bitmapWithFaces.bitmap);
                 StringBuilder builder = new StringBuilder();
                 builder.append(bitmapWithFaces.faces.size());

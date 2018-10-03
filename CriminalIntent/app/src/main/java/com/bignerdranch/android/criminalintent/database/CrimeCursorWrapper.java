@@ -25,6 +25,8 @@ public class CrimeCursorWrapper extends CursorWrapper {
         String img_2URI = getString(getColumnIndex(CrimeTable.Cols.IMG_2));
         String img_3URI = getString(getColumnIndex(CrimeTable.Cols.IMG_3));
         String img_4URI = getString(getColumnIndex(CrimeTable.Cols.IMG_4));
+        int imgPos = getInt(getColumnIndex(CrimeTable.Cols.CURRENT_IMAGE_POSITION));
+        int faceId = getInt(getColumnIndex(CrimeTable.Cols.FACE_DETECT_INDEX));
 
         Crime crime = new Crime(UUID.fromString(uuidString));
         crime.setTitle(title);
@@ -35,6 +37,8 @@ public class CrimeCursorWrapper extends CursorWrapper {
         crime.setImg_2(img_2URI);
         crime.setImg_3(img_3URI);
         crime.setImg_4(img_4URI);
+        crime.setCurrentImagePosition(imgPos);
+        crime.setFaceDetectIndex(faceId);
 
         return crime;
     }

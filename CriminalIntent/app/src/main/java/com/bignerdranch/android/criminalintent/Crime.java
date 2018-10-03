@@ -24,6 +24,8 @@ public class Crime {
     public Crime(UUID id) {
         mId = id;
         mDate = new Date();
+        currentImagePosition = 0;
+        faceDetectIndex = 0;
     }
     public UUID getId() {
         return mId;
